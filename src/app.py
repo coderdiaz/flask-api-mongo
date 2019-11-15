@@ -35,6 +35,29 @@ def create_author():
   db.authors.insert({ 'name': name,'bio': bio })
   return jsonify(), 201
 
+@app.route('/api/author/<author_id>', methods=['GET'])
+def find_author(author_id):
+  author = db.authors.find_one({ '_id': ObjectId(author_id) })
+  return jsonify(json.loads(json_util.dumps(author)))
+
+@app.route('/api/author/<author_id>', methods=['PUT'])
+def update_author(author_id):
+  name = request.json["name"]
+  bio = request.json["bio"]
+
+  db.authors.update({ '_id': ObjectId(author_id)}, {
+    '$set': {
+      'name': name,
+      'bio': bio
+    }
+  })
+  return jsonify(), 200
+
+@app.route('/api/author/<author_id>', methods=['DELETE'])
+def delete_author(author_id):
+  db.authors.remove({ '_id': ObjectId(author_id) })
+  return jsonify(), 200
+
 # Error handler for catch 404 not found
 @app.errorhandler(404)
 def not_found(error):
